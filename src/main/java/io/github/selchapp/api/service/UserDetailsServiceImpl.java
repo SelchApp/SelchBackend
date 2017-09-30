@@ -1,8 +1,10 @@
 package io.github.selchapp.api.service;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,9 +28,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		if (user == null) {
 			throw new UsernameNotFoundException(String.format("User %s not found.", username));
 		}
-		SimpleGrantedAuthority authority = new SimpleGrantedAuthority("default");
-		return new org.springframework.security.core.userdetails.User(username, user.getPassword(),
-				Arrays.asList(authority));
+
+		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("default"));
+		if ("test".equals(username)) {
+			authorities.add(new SimpleGrantedAuthority("ACTUATOR"));
+		}
+		return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);
 
 	}
 
