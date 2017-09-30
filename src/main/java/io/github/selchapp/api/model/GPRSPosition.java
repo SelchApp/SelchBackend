@@ -12,27 +12,27 @@ public class GPRSPosition {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Long id;
 
-	private double north;
-	private double east;
+	private double latitude;
+	private double longitude;
 
 	public Long getId() {
 		return id;
 	}
 
-	public double getNorth() {
-		return north;
+	public double getLatitude() {
+		return latitude;
 	}
 
-	public void setNorth(double north) {
-		this.north = north;
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
 	}
 
-	public double getEast() {
-		return east;
+	public double getLongitude() {
+		return longitude;
 	}
 
-	public void setEast(double east) {
-		this.east = east;
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 }

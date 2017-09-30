@@ -9,8 +9,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 @Entity
+@Table(name="team")
 public class Team {
 
 	@Id
@@ -20,11 +26,17 @@ public class Team {
 	private String name;
 
 	@ManyToMany
-	@JoinTable(name = "team_members", joinColumns = @JoinColumn(name = "team_id", referencedColumnName = "ID"), inverseJoinColumns = @JoinColumn(name = "member_id", referencedColumnName = "ID"))
+	@JoinTable(name = "team_members", joinColumns = @JoinColumn(name = "team_id"), inverseJoinColumns = @JoinColumn(name = "member_id"))
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+	@JsonIdentityReference(alwaysAsId=true)
 	private Collection<User> users;
 
 	public Long getId() {
 		return id;
+	}
+	
+	public void setId(long id) {
+		this.id = id;
 	}
 
 	public String getName() {

@@ -9,19 +9,31 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 @Entity
 @Table(name="user")
 public class User {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+	@JsonProperty("id")
 	private Long id;
 	
+	@JsonProperty("nickname")
 	private String nickname;
 	
+	@JsonIgnore
 	private String password;
 	
 	@ManyToMany(mappedBy="users")
+	@JsonProperty("teams")
+	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+	@JsonIdentityReference(alwaysAsId=true)
 	private Collection<Team> teams;
 	
 	//private GPRSPosition currentPosition;
