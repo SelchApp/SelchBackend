@@ -1,40 +1,43 @@
 package io.github.selchapp.api.controller;
 
-import javax.websocket.server.PathParam;
-
-import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import io.github.selchapp.api.model.GPRSPosition;
+import io.github.selchapp.api.model.User;
+import io.github.selchapp.api.model.UserRepository;
 
-@Controller
+@RestController
 public class PositionController {
 
+	@Autowired
+	private UserRepository userRepository;
+	
 	@RequestMapping(method=RequestMethod.GET, path="position/self")
-	@ResponseBody
-	public GPRSPosition getSelfPosition() {
-		GPRSPosition position = new GPRSPosition();
-		position.setLatitude(47.4917816);
-		position.setLongitude(12.2715673);
-		return position;
+	public GPRSPosition getSelfPosition(@AuthenticationPrincipal final UserDetails userDetails) {
+		String username = userDetails.getUsername();
+		User user = userRepository.findByNickname(username);
+		return user.getCurrentPosition();
 	}
 	
-	@RequestMapping(method=RequestMethod.PUT, path="position/self")
-	@ResponseBody
-	public void setSelfPosition(@RequestParam GPRSPosition newPosition) {
-
+	@RequestMapping(method=RequestMethod.POST, path="position/self")
+	public void setSelfPosition(@RequestBody(required=true) GPRSPosition newPosition, @AuthenticationPrincipal final UserDetails userDetails) {
+		String username = userDetails.getUsername();
+		User user = userRepository.findByNickname(username);
+		user.setCurrentPosition(newPosition);
+		userRepository.save(user);
 	}
 	
 	@RequestMapping(method=RequestMethod.GET, path="position/user/{userid}")
-	@ResponseBody
-	public GPRSPosition getUserPosition(@PathParam("userid") int userId) {
-		GPRSPosition position = new GPRSPosition();
-		position.setLatitude(47.4943406);
-		position.setLongitude(12.2655373);
-		return position;
+	public GPRSPosition getUserPosition(@PathVariable(name="userid", required=true) long userId) {
+		User user = userRepository.findById(userId);
+		return user.getCurrentPosition();
 	}
 	
 }

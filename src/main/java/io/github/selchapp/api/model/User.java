@@ -2,6 +2,7 @@ package io.github.selchapp.api.model;
 
 import java.util.Collection;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,7 +37,9 @@ public class User {
 	@JsonIdentityReference(alwaysAsId=true)
 	private Collection<Team> teams;
 	
-	//private GPRSPosition currentPosition;
+	@Embedded
+	@JsonIgnore
+	private GPRSPosition currentPosition;
 
 	public void setId(Long id) {
 		this.id = id;
@@ -66,14 +69,12 @@ public class User {
 		this.teams = teams;
 	}
 
-//	public GPRSPosition getCurrentPosition() {
-//		return currentPosition;
-//	}
-//
-//	public void setCurrentPosition(GPRSPosition currentPosition) {
-//		this.currentPosition = currentPosition;
-//	}
-	
-	
+	public GPRSPosition getCurrentPosition() {
+		return currentPosition;
+	}
+
+	public void setCurrentPosition(GPRSPosition currentPosition) {
+		this.currentPosition = currentPosition;
+	}
 	
 }

@@ -22,16 +22,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	@Override
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
-		System.out.println(username);
 		User user = userRepository.findByNickname(username);
 		if (user == null) {
 			throw new UsernameNotFoundException(String.format("User %s not found.", username));
 		}
-		System.out.println(user);
-		
 		SimpleGrantedAuthority authority = new SimpleGrantedAuthority("default");
-
 		return new org.springframework.security.core.userdetails.User(username, user.getPassword(),
 				Arrays.asList(authority));
 

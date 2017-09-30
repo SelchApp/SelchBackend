@@ -8,22 +8,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.github.selchapp.api.model.Team;
-import io.github.selchapp.api.model.TeamRepository;
+import io.github.selchapp.api.model.User;
+import io.github.selchapp.api.model.UserRepository;
 
 @RestController
-public class TeamController {
+public class UserController {
 
 	@Autowired
-	private TeamRepository teamRepository;
-
-	@RequestMapping(method=RequestMethod.GET, path="/team/{teamId}")
-    public Team getTeam(@PathVariable(name="teamId", required=true) long teamId) {
-		Team team = teamRepository.findById(teamId);
-		if (team == null) {
+	private UserRepository userRepository;
+	
+	@RequestMapping(method=RequestMethod.GET, path="/user/{userId}")
+    public User getTeam(@PathVariable(name="userId", required=true) long userId) {
+		User user = userRepository.findById(userId);
+		if (user == null) {
 			throw new EntityNotFoundException();
 		}
-		return team;
+		return user;
 	}
 	
 }
