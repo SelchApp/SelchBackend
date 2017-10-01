@@ -9,30 +9,30 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class GPRSPosition {
 	
 	@Column(nullable=true)
-	private double latitude;
+	private double lat;
 	
 	@Column(nullable=true)
-	private double longitude;
+	private double lng;
 
 	public double getLatitude() {
-		return latitude;
+		return lat;
 	}
 
 	public void setLatitude(double latitude) {
-		this.latitude = latitude;
+		this.lat = latitude;
 	}
 
 	public double getLongitude() {
-		return longitude;
+		return lng;
 	}
 
 	public void setLongitude(double longitude) {
-		this.longitude = longitude;
+		this.lng = longitude;
 	}
 	
 	@JsonIgnore
 	public boolean isValid() {
-		return latitude != 0 && longitude != 0;
+		return lat != 0 && lng != 0;
 	}
 	
 }
