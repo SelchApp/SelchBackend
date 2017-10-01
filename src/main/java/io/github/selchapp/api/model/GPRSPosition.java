@@ -32,7 +32,7 @@ public class GPRSPosition {
 	
 	@JsonIgnore
 	public boolean isValid() {
-		return latitude > 0 && longitude > 0;
+		return latitude != 0 && longitude != 0;
 	}
 	
 }
