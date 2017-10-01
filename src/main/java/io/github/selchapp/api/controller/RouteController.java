@@ -14,26 +14,25 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import io.github.selchapp.api.model.GPRSPosition;
 import io.github.selchapp.api.model.User;
 import io.github.selchapp.api.model.UserRepository;
+import io.github.selchapp.api.util.JsonWrapper;
 
-@Controller
+@RestController
 public class RouteController {
-
+	
 	@Autowired
 	private UserRepository userRepository;
 	
-	@RequestMapping(method=RequestMethod.GET, path="route/touser/{userId}", produces="application/json")
-	@ResponseBody
-	public String getRoute(@PathVariable(name="userId", required=true) long userId, @RequestParam GPRSPosition selfPosition) throws URISyntaxException, UnsupportedOperationException, IOException {
+	@RequestMapping(method=RequestMethod.POST, path="route/touser/{userId}")
+	public JsonWrapper getRoute(@PathVariable(name="userId", required=true) long userId, @RequestBody GPRSPosition selfPosition) throws URISyntaxException, UnsupportedOperationException, IOException {
 		User destinationUser = userRepository.findById(userId);
 		
 		Optional<GPRSPosition> sourcePosition = Optional.ofNullable(selfPosition).filter(GPRSPosition::isValid);
@@ -67,7 +66,7 @@ public class RouteController {
 				throw new IllegalStateException(String.format("Processing in backend service failed %s", statusCode));
 			}
 			
-			return IOUtils.toString(result.getEntity().getContent(), Charset.defaultCharset());
+			return new JsonWrapper(IOUtils.toString(result.getEntity().getContent(), Charset.defaultCharset()));
 		} finally {
 			IOUtils.closeQuietly(httpClient);
 		}
