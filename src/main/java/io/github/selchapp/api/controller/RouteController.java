@@ -45,6 +45,7 @@ public class RouteController {
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		try {
 			URI queryUri = new URIBuilder()
+				.setScheme("http")
 				.setHost("localhost")
 				.setPort(15235)
 				.setPath("query")
