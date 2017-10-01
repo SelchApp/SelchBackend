@@ -27,5 +27,9 @@ public class GPRSPosition {
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
+	
+	public boolean isValid() {
+		return latitude > 0 && longitude > 0;
+	}
 
 }
