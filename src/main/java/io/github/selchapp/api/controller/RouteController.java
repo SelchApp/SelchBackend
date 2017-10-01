@@ -56,10 +56,10 @@ public class RouteController {
 				.setHost("localhost")
 				.setPort(15235)
 				.setPath("query")
-				.addParameter("slat", Double.toString(sourcePosition.get().getLatitude()))
-				.addParameter("slng", Double.toString(sourcePosition.get().getLongitude()))
-				.addParameter("tlat", Double.toString(destinationPosition.get().getLatitude()))
-				.addParameter("tlng", Double.toString(destinationPosition.get().getLongitude()))
+				.addParameter("slat", Double.toString(sourcePosition.get().getLat()))
+				.addParameter("slng", Double.toString(sourcePosition.get().getLng()))
+				.addParameter("tlat", Double.toString(destinationPosition.get().getLat()))
+				.addParameter("tlng", Double.toString(destinationPosition.get().getLng()))
 				.build();
 			LOGGER.debug("Request to routing backend via URI {}", queryUri);
 			
