@@ -13,6 +13,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,6 +30,8 @@ import io.github.selchapp.api.util.JsonWrapper;
 @RestController
 public class RouteController {
 	
+	private static final Logger LOGGER = LoggerFactory.getLogger(RouteController.class);
+	
 	@Autowired
 	private UserRepository userRepository;
 	
@@ -37,6 +41,9 @@ public class RouteController {
 		
 		Optional<GPRSPosition> sourcePosition = Optional.ofNullable(selfPosition).filter(GPRSPosition::isValid);
 		Optional<GPRSPosition> destinationPosition = Optional.ofNullable(destinationUser).map(User::getCurrentPosition).filter(GPRSPosition::isValid);
+		
+		logPosition("source", sourcePosition);
+		logPosition("destination", destinationPosition);
 		
 		if (!sourcePosition.isPresent() || !destinationPosition.isPresent()) {
 			throw new IllegalArgumentException("The given coordinates are not valid for a routing request.");
@@ -54,6 +61,7 @@ public class RouteController {
 				.addParameter("tlat", Double.toString(destinationPosition.get().getLatitude()))
 				.addParameter("tlng", Double.toString(destinationPosition.get().getLongitude()))
 				.build();
+			LOGGER.debug("Request to routing backend via URI {}", queryUri);
 			
 			HttpGet getRequest = new HttpGet(queryUri);
 			CloseableHttpResponse result;
@@ -67,9 +75,19 @@ public class RouteController {
 				throw new IllegalStateException(String.format("Processing in backend service failed %s", statusCode));
 			}
 			
-			return new JsonWrapper(IOUtils.toString(result.getEntity().getContent(), Charset.defaultCharset()));
+			String body = IOUtils.toString(result.getEntity().getContent(), Charset.defaultCharset());
+			LOGGER.debug("Received response from routing backend:\n{}", body);
+			return new JsonWrapper(body);
 		} finally {
 			IOUtils.closeQuietly(httpClient);
+		}
+	}
+
+	private void logPosition(String description, Optional<GPRSPosition> sourcePosition) {
+		if (!sourcePosition.isPresent()) {
+			LOGGER.warn("{} position is invalid.", description);
+		} else {
+			LOGGER.debug("{} position: {}", description, sourcePosition.get());
 		}
 	}
 
